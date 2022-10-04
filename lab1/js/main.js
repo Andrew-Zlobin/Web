@@ -293,6 +293,15 @@ class EventController {
     }
 }
 
+function createExitButton() {
+    let form = document.createElement('form');
+    form.action = "records.html";
+    let input = document.createElement('input');
+    input.type = "submit";
+    input.value = "Далее";
+    form.appendChild(input);
+    document.getElementById("statistic").appendChild(form);
+}
 
 function game() {
 
@@ -302,10 +311,12 @@ function game() {
     let eventController = new EventController(figure);
 
     function gameLoop() {
+
         eventController.update();
         field.update();
         if ( ! figure.update()) {
             clearInterval(refreshIntervalId);
+            createExitButton();
             return;
         }
 
