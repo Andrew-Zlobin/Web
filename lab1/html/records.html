@@ -3,12 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JavaScript Tetris</title>
+  <title> Рекорды </title>
+  <link href="../styles/records.css" rel="stylesheet" type="text/css">
   </head>
 <body>
-  <script src="../js/records.js"></script>
-  <form src="login.html">
+  <div class="grid">
+    <div id="tableLocation">
+      <table> 
+        <tbody id="recordTable">
+          <tr>
+            <td> Никнейм </td>
+            <td> Счёт </td>
+            <td> Ряды </td>
+            <td> Уровень </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <form action="login.html">
       <input type="submit" value="Далее">
-  </form>
+    </form>
+  </div>
+
+  <script src="../js/records.js"></script>
 </body>
 </html>

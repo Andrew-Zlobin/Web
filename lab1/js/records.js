@@ -1,26 +1,21 @@
-function generateTable(data) {
-    const tbl = document.createElement("table");
-    const tblBody = document.createElement("tbody");
-
-    for (let i = 0; i < 2; i++) {
+function generateTable() {
+    const tbl = document.getElementById('recordTable');
+    let playersList = getPlayers();
+    for (player in playersList) {
         const row = document.createElement("tr");
-  
-        for (let j = 0; j < 2; j++) {
+        console.log(playersList[player]);
+        for (p in playersList[player]) {
             const cell = document.createElement("td");
-            const cellText = document.createTextNode(`cell in row ${i}, column ${j}`);
+            const cellText = document.createTextNode(playersList[player][p]);
             cell.appendChild(cellText);
             row.appendChild(cell);
         }
-        tblBody.appendChild(row);
+        tbl.appendChild(row);
     }
-    tbl.appendChild(tblBody);
-    document.body.appendChild(tbl);
-    tbl.setAttribute("border", "2");
 }
-function getData() {
-    
+function getPlayers() {
+    console.log(JSON.parse(localStorage.getItem("listPlayer")));
+    return JSON.parse(localStorage.getItem("listPlayer"));
 }
 
-
-let data = getData();
-generateTable(data);
+generateTable();

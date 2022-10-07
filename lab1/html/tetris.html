@@ -3,27 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JavaScript Tetris</title>
+  <title>Тетрис</title>
+  <link href="../styles/tetris.css" rel="stylesheet" type="text/css">
   </head>
 <body>
  
 
 
   <div class="grid">
-    <canvas id="board" class="game-board"></canvas>
-    <div class="right-column">
+    <div id="boardLocation">
+      <canvas id="board" class="game-board"></canvas>
+    </div>
+    <div id="gameInfo">
+      <div id="nextFigureLocation">
+        <canvas id="next" class="next"></canvas>
+      </div>
       <div id="statistic">
         <h1>TETRIS</h1>
         <p>Name: <span id="name">0</span></p>
         <p>Score: <span id="score">0</span></p>
         <p>Lines: <span id="lines">0</span></p>
         <p>Level: <span id="level">0</span></p>
-        <canvas id="next" class="next"></canvas>
       </div>
       
     </div>
   </div>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/tetris.js"></script>
 </body>
 </html>

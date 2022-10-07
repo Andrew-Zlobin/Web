@@ -1,0 +1,27 @@
+#boardLocation {
+    float: left;
+    display: block;
+    width: auto;
+    border: 1px solid blue;
+    margin: 2px;
+}
+
+#gameInfo {
+    float: left;
+display: block;
+width: auto;
+border: 1px solid blue;
+margin: 2px;
+}
+
+#nextFigureLocation {
+    margin: 50px;
+}
+.grid {
+    padding: 50px;
+    background: #ccc;
+    position: fixed; top: 50%; left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}

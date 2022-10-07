@@ -5,6 +5,6 @@ function login(e){
     
     localStorage.setItem("currentPlayer", name);
 }
-
+// localStorage.clear();
 document.getElementById("name").value = localStorage.getItem("currentPlayer");
 document.getElementById("usr").addEventListener("submit", login);

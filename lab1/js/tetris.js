@@ -14,6 +14,12 @@ ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 
 document.getElementById("name").textContent = localStorage.getItem("currentPlayer");
 
+const nextFigureCanvas = document.getElementById("next");
+const nfctx = nextFigureCanvas.getContext('2d');
+nfctx.canvas.width = 4 * BLOCK_SIZE;
+nfctx.canvas.height = 4 * BLOCK_SIZE;
+nfctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+
 
 class Field {
     constructor(gameStatistic) {
@@ -25,7 +31,7 @@ class Field {
                 this.field[i][j] = 0;
             }
         }
-        this.field[COLS - 5][ROWS - 5] = 1;
+        //this.field[COLS - 5][ROWS - 5] = 1;
     }
     draw() {
         for (let i = 0; i < COLS; i = i + 1) {
@@ -73,13 +79,33 @@ class Field {
     }
     
     RemoveFullRows() {
+        let sameTimeRemuved = 0;
         for (let i = 0; i < ROWS; i = i + 1){
             if (this.isRowFull(i)) {
                 for (let j = 0; j < COLS; j = j + 1) {
                     this.field[j][i] = 0;
                 }
-                this.gameStatistic.lines + 1;
+                //this.gameStatistic.lines += 1;
+                //this.gameStatistic.level += 1;
+                sameTimeRemuved++;
             }
+        }
+        this.gameStatistic.lines += sameTimeRemuved;
+        switch (sameTimeRemuved) {
+            case 1:
+                this.gameStatistic.score += 100;
+                break;
+            case 2:
+                this.gameStatistic.score += 300;
+                break;
+            case 3:
+                this.gameStatistic.score += 700;
+                break;
+            case 4:
+                this.gameStatistic.score += 1500;
+                break;
+            default:
+                break;
         }
     }
 
@@ -87,6 +113,7 @@ class Field {
         console.log("field update");
         this.RemoveFullRows();
         this.applyPhysics();
+        return this.gameStatistic;
     }
 }
 
@@ -109,7 +136,12 @@ let colors = ["white",
 class Figure {
     constructor(field) {
         this.field = field;
-        this.generateNewFigure();
+        let newFigure = this.generateNewFigure();
+        let nextFigure = this.generateNewFigure();
+        this.figure = newFigure.rfigure;
+        this.size = newFigure.rsize;
+        this.nextFigure = nextFigure.rfigure;
+        this.nextSize = nextFigure.rsize;
     }
     checkCollision(possibleDirection = {x : 0, y : 0}) {
         let newPosition = {x : this.position.x + possibleDirection.x,
@@ -157,10 +189,11 @@ class Figure {
 
     rotate() {
         let newFigure = [];
-        for (let i = 0; i < this.size; i = i + 1) {
-            newFigure[i] = []
-            for (let j = 0; j < this.size; j = j + 1) {
-                newFigure[i][j] = this.figure[j][i];
+        for (let i = 0; i < this.size; i = i + 1) 
+            newFigure[i] = new Array(this.size).fill(0);
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                newFigure[x][y] = this.figure[this.size - 1 - y][x];
             }
         }
         this.figure = newFigure;
@@ -187,66 +220,76 @@ class Figure {
 
     generateNewFigure() {
         let c = this.chooseFigureType();
+        let figure = [];
+        let size = 0;
         switch (c) {
             case 1:
-                this.figure = [[0, 0, 0, 0],
+                figure = [[0, 0, 0, 0],
                                [0, 0, 0, 0],
                                [c, c, c, c],
                                [0, 0, 0, 0]];
+                size = 4;
                 break;
             case 2:
-                this.figure = [[0, 0, 0, 0],    //[0, 0, 1, 0], 
-                               [0, c, 0, 0],    //[0, 0, 1, 0], 
-                               [0, c, c, c],    //[0, 1, 1, 0], 
-                               [0, 0, 0, 0]];   //[0, 0, 0, 0]];
+                figure = [[c, 0, 0], 
+                               [c, c, c],
+                               [0, 0, 0]];
+                size = 3;
                 break;
             case 3:
-                this.figure = [[0, 0, 0, 0],
-                               [0, 0, c, 0],
-                               [c, c, c, 0],
-                               [0, 0, 0, 0]];
+                figure = [[0, 0, 0],
+                               [0, 0, c],
+                               [c, c, c]];
+                size = 3;
                 break;
             case 4:
-                this.figure = [[0, 0, 0, 0],
-                               [0, c, c, 0],
-                               [c, c, 0, 0],
-                               [0, 0, 0, 0]];
+                figure = [[0, c, c],
+                               [c, c, 0],
+                               [0, 0, 0]];
+                size = 3;
                 break;
             case 5:
-                this.figure = [[0, 0, 0, 0],
-                               [c, c, 0, 0],
-                               [0, c, c, 0],
-                               [0, 0, 0, 0]];
+                figure = [[c, c, 0],
+                               [0, c, c],
+                               [0, 0, 0]];
+                size = 3;
                 break;
             case 6:
-                this.figure = [[0, 0, 0, 0],
-                               [0, c, 0, 0],
-                               [c, c, c, 0],
-                               [0, 0, 0, 0]];
+                figure = [[0, c, 0],
+                               [c, c, c],
+                               [0, 0, 0]];
+                size = 3;
                 break;
             case 7:
-                this.figure = [[0, 0, 0, 0],
+                figure = [[0, 0, 0, 0],
                                [0, c, c, 0],
                                [0, c, c, 0],
                                [0, 0, 0, 0]];
+                size = 4;
                 break;
             case 8:
-                this.figure = [[0, 0, 0, 0],
+                figure = [[0, 0, 0, 0],
                                [0, 0, 0, 0],
                                [c, c, c, c],
                                [0, 0, 0, 0]];
+                size = 4;
                 break;
             default:
                 break;
         }
-        this.size = 4;
+        //this.size = 4;
         this.position = {x : COLS / 2 - 2, y : 0};
+        return {rfigure : figure, rsize : size};
     }
 
     update() {
         if ( ! this.applyPhysics()) {
             this.saveFigureToField();
-            this.generateNewFigure();
+            this.figure = this.nextFigure;
+            this.size = this.nextSize;
+            let nextFigure = this.generateNewFigure();
+            this.nextFigure = nextFigure.rfigure;
+            this.nextSize = nextFigure.rsize;
             if (this.checkCollision()){
                 return false;
             }
@@ -264,6 +307,19 @@ class Figure {
                 }
             }
         }
+        
+        for (let i = 0; i < 4; i = i + 1) {
+            for (let j = 0; j < 4; j = j + 1) {
+                nfctx.fillStyle = colors[0];
+                nfctx.fillRect(i, j, 1, 1);
+            }
+        }
+        for (let i = 0; i < this.nextSize; i = i + 1) {
+            for (let j = 0; j < this.nextSize; j = j + 1) {
+                nfctx.fillStyle = colors[this.nextFigure[i][j]];
+                nfctx.fillRect(i, j, 1, 1);
+            }
+        }
     }
 }
 
@@ -276,6 +332,7 @@ class EventController {
         this.keyListLeft = ['a', 'A', 'ф', 'Ф'];
         this.keyListRight = ['d', 'D', 'в', 'В'];
         this.keyListRotate = ['e', 'E', 'У', 'у'];
+        this.keyListDropDown = ['ы', 'Ы', 's', 'S'];
     }
     update() {}
 
@@ -288,6 +345,9 @@ class EventController {
         }
         if (this.keyListRotate.includes(event.key)) {                
             this.figure.rotate();
+        }
+        if (this.keyListDropDown.includes(event.key)) {                
+            this.figure.applyPhysics();
         }
         
     }
@@ -303,30 +363,82 @@ function createExitButton() {
     document.getElementById("statistic").appendChild(form);
 }
 
-function game() {
+function saveCurrentPlayer (gameStatistic) {
+    if (localStorage.getItem("listPlayer") == null) {
+        localStorage.setItem("listPlayer", JSON.stringify([]));
+    }
+    
+    let playersList = JSON.parse(localStorage.getItem("listPlayer"));
+    playersList.push({name: localStorage.getItem("currentPlayer"), score : gameStatistic.score, lines : gameStatistic.lines, level : gameStatistic.level});
+    localStorage.setItem("listPlayer", JSON.stringify(playersList));
+    
+}
 
-    let gameStatistic = {score : 0, lines : 0, level : 1};
-    let field = new Field(gameStatistic);
-    let figure = new Figure(field);
-    let eventController = new EventController(figure);
+function showStatistic(gameStatistic) {
+    document.getElementById("score").innerText = gameStatistic.score;
+    document.getElementById("lines").innerText = gameStatistic.lines;
+    document.getElementById("level").innerText = gameStatistic.level;
+    document.getElementById("next");
+}
 
-    function gameLoop() {
 
-        eventController.update();
-        field.update();
-        if ( ! figure.update()) {
-            clearInterval(refreshIntervalId);
+function updateScore() {
+
+}
+
+class GameController {
+    constructor() {
+        
+        this.gameStatistic = {score : 0, lines : 0, level : 1};
+        this.gameSpeed = 300;
+        this.nextSpeedScore = 2000;
+        this.field = new Field(this.gameStatistic);
+        this.figure = new Figure(this.field);
+        this.eventController = new EventController(this.figure);
+
+
+        document.addEventListener("keydown", this.eventController);
+    }
+
+    start() {
+        var bindedGameLoop = this.gameLoop.bind(this);
+        this.refreshIntervalId = setInterval(bindedGameLoop, this.gameSpeed);
+    }
+
+    increaseSpeed() {
+        this.gameSpeed = this.gameSpeed / this.gameStatistic.level;
+        console.log("incresed");
+        clearInterval(this.refreshIntervalId);
+        var bindedGameLoop = this.gameLoop.bind(this);
+        this.refreshIntervalId = setInterval(bindedGameLoop, this.gameSpeed);
+    }
+    checkStatistic() {
+
+        if (this.gameStatistic.score >= this.nextSpeedScore) {
+            this.increaseSpeed();
+            this.gameStatistic.level ++;
+            this.nextSpeedScore *= 2;
+        }
+    }
+    gameLoop() {
+
+        //this.eventController.update();
+        this.field.update();
+        this.checkStatistic();
+        showStatistic(this.gameStatistic);
+        if ( ! this.figure.update()) {
+            clearInterval(this.refreshIntervalId);
             createExitButton();
+            saveCurrentPlayer(this.gameStatistic);
             return;
         }
 
-        field.draw();
-        figure.draw();
-
+        this.field.draw();
+        this.figure.draw();
+        
     }
 
-    let refreshIntervalId = setInterval(gameLoop, 300);
-    document.addEventListener("keydown", eventController);
 }
 
-game();
+var game = new GameController();
+game.start();
