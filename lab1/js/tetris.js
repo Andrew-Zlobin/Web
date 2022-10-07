@@ -196,7 +196,14 @@ class Figure {
                 newFigure[x][y] = this.figure[this.size - 1 - y][x];
             }
         }
+        let t = this.figure;
         this.figure = newFigure;
+        newFigure = t;
+        if (this.checkCollision()) {
+            t = this.figure;
+            this.figure = newFigure;
+            newFigure = t;
+        }
         this.draw();
         this.field.draw();
     }
